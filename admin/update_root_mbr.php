@@ -1,0 +1,373 @@
+<?php 
+include_once("main.class.php");
+?>
+<!DOCTYPE html>
+<html>
+ <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title> <?= $object->title()?> | Admin</title>
+    <!-- Tell the browser to be responsive to screen width -->
+    <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+    <!-- Bootstrap 3.3.5 -->
+    <link rel="stylesheet" href="bootstrap/css/bootstrap.min.css">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+    <!-- Ionicons -->
+    <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
+    <!-- daterange picker -->
+    <link rel="stylesheet" href="plugins/daterangepicker/daterangepicker-bs3.css">
+    <!-- iCheck for checkboxes and radio inputs -->
+    <link rel="stylesheet" href="plugins/iCheck/all.css">
+    <!-- Bootstrap Color Picker -->
+    <link rel="stylesheet" href="plugins/colorpicker/bootstrap-colorpicker.min.css">
+    <!-- Bootstrap time Picker -->
+    <link rel="stylesheet" href="plugins/timepicker/bootstrap-timepicker.min.css">
+    <!-- Select2 -->
+    <link rel="stylesheet" href="plugins/select2/select2.min.css">
+    <!-- Theme style -->
+    <link rel="stylesheet" href="dist/css/AdminLTE.min.css">
+    <!-- AdminLTE Skins. Choose a skin from the css/skins
+         folder instead of downloading all of them to reduce the load. -->
+    <link rel="stylesheet" href="dist/css/skins/_all-skins.min.css">
+
+    
+  </head>
+  <body class="hold-transition skin-blue sidebar-mini">
+    <div class="wrapper">
+
+      <?php include_once('header.php');
+      include_once('left_asid.php');
+      $rootMemberDtls=$object->singelRootMbrDtls(base64_decode($_GET['rmID']));	 
+	    ?>
+
+      <!-- Content Wrapper. Contains page content -->
+      <div class="content-wrapper">
+        <!-- Content Header (Page header) -->
+        <section class="content-header">
+          <h1>
+           Details Of Root Members - "<?= $rootMemberDtls['name'];?>""      
+          </h1>
+          <ol class="breadcrumb">
+            <li><a href="dashboard"><i class="fa fa-dashboard"></i> Home</a></li>
+            <li><a href="add_root_members">Update Of Root Members</a></li>
+            <li class="active">Update Root Members</li>
+          </ol>
+        </section>
+
+        <!-- Main content -->
+        <section class="content">
+
+          <!-- SELECT2 EXAMPLE -->
+		  <?php
+				if(isset($_POST['update_register_mbr']))
+				{
+				if($_POST['form_id']==$_SESSION['session_form'])
+				{
+				$_SESSION['session_form']='';
+				$msg=$object->updateRegisteredUsers(base64_decode($_GET['rmID']));
+				}                					
+				}
+				else
+				{
+				$_SESSION['session_form']=md5(uniqid(rand(0,10000000)));
+				session_write_close();
+				}	                 				 
+			?>
+          <div class="box box-default">
+            <div class="box-header with-border">
+              <h3 class="box-title"><?= isset($msg)? $msg:'Update Specific Root Members';?></h3>
+              <div class="box-tools pull-right">
+                <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+                <button class="btn btn-box-tool" data-widget="remove"><i class="fa fa-remove"></i></button>
+              </div>
+            </div><!-- /.box-header -->
+			
+            <div class="box-body">
+              <div class="row">
+			<form method="post" enctype="multipart/form-data" >
+			 <input type="hidden" name="form_id" value="<?= $_SESSION['session_form'];?>" />        
+			
+                 <div class="slno">
+                 <div class="col-md-3">
+                  <div class="form-group">
+                    <label class="slNoStatus">SL. No <b style="color: red;font-size: 14px;">*</b></label>
+                    <input id="RMbrSlNo" type="text" class="form-control" name="sl_number" placeholder="Serial Number" required="required"
+                    value="<?= $rootMemberDtls['sl_no']?>" readonly>          
+                  </div><!-- /.form-group -->                  
+                </div><!-- /.col -->                                 
+                </div><!-- /.col -->
+                 <div class="col-md-3">
+                  <div class="form-group">
+                    <label>Name (In Block Letter) <b style="color: red;font-size: 14px;">*</b></label>
+                    <input type="text" class="form-control" name="name" placeholder="Name (In Block Letter)" value="<?= $rootMemberDtls['name']?>"  required >    
+                  </div><!-- /.form-group -->                  
+                </div><!-- /.col --> 
+                 <div class="col-md-3">
+                  <div class="form-group">
+                    <label>Father / Spouse Name  <b style="color: red;font-size: 14px;">*</b></label>
+                    <input type="text" class="form-control" name="father_spouse_name" placeholder="Father / Spouse Name" pattern="[a-zA-Z][a-zA-Z\s]*" minlength="3" maxlength="50" oninvalid="setCustomValidity('Enter Valid Name')"  onchange="try{setCustomValidity('')}catch(e){}" value="<?= $rootMemberDtls['father_spouse']?>" required >
+                  </div><!-- /.form-group -->                  
+                </div><!-- /.col -->	
+                <div class="col-md-3">
+                  <div class="form-group">
+                  <label class="rollAvl">Mother`s Name <b style="color: red;font-size: 14px;">*</b></label>
+                  <input id="rollNum" type="text" class="form-control" name="mother_name" placeholder="Mother`s Name" pattern="[a-zA-Z][a-zA-Z\s]*" minlength="3" maxlength="50" oninvalid="setCustomValidity('Enter Valid Name')"  onchange="try{setCustomValidity('')}catch(e){}" value="<?= $rootMemberDtls['mother_name']?>"  required="required">        
+                  </div><!-- /.form-group -->                  
+                </div><!-- /.col -->	
+                <div class="col-md-3">
+                  <div class="form-group">
+                    <label>Date Of Birth <b style="color: red;font-size: 14px;">*</b></label>
+                    <input type="date" class="form-control" name="dob" value="<?= $rootMemberDtls['dob']?>" required="required">    
+                  </div><!-- /.form-group -->                  
+                </div><!-- /.col -->  		
+        								
+              <div class="col-md-3">
+                  <div class="form-group">
+                    <label>Marital Status <b style="color: red;font-size: 14px;">*</b></label>
+                    <select  class="form-control select2 ldfon" name="marital_status"  required="required" style="width: 100%;">
+                      <option value="" >Marital Status</option>                      
+                      <option <?php if($rootMemberDtls['maritial_status']=='2') {echo"selected=selected";}  ?> value="2" >Married</option>
+                      <option <?php if($rootMemberDtls['maritial_status']=='1') {echo"selected=selected";}  ?> value="1" >Un Married</option>
+                       
+                    </select>                           
+                  </div><!-- /.form-group -->                  
+                </div><!-- /.col -->                 
+				      <div class="col-md-3">
+                  <div class="form-group">
+                    <label>Sex <b style="color: red;font-size: 14px;">*</b></label>
+                    <select  class="form-control select2 ldfon" name="sex" required style="width: 100%;">
+                      <option value="" >Sex Status</option>                      
+                      <option <?php if($rootMemberDtls['sex']=='1') {echo"selected=selected";}  ?> value="1" >Male</option>
+                      <option <?php if($rootMemberDtls['sex']=='0') {echo"selected=selected";}  ?> value="0" >Female</option>
+                       
+                    </select>                           
+                  </div><!-- /.form-group -->                  
+                </div><!-- /.col -->
+
+				        <div class="col-md-3">
+                  <div class="form-group">
+                    <label>Family Member <b style="color: red;font-size: 14px;">*</b></label>
+                    <input type="text" class="form-control" name="family_member" placeholder="Family Member"  value="<?= $rootMemberDtls['family_member']?>"  required >    
+                  </div><!-- /.form-group -->                  
+                </div><!-- /.col --> 
+			 <div class="col-md-6">
+                  <div class="form-group">
+                      <label>Address <b style="color: red;font-size: 14px;">*</b></label>
+                      <textarea class="form-control" rows="3" name="address" placeholder="Address" required="required" ><?= $rootMemberDtls['address']?></textarea>
+                    </div><!-- /.form-group -->                  
+                </div><!-- /.col -->
+                <div class="col-md-3">
+                  <div class="form-group">
+                    <label>Mobile Number<b style="color: red;font-size: 14px;">*</b></label>
+                    <input type="text" class="form-control" name="mobile_number"  placeholder="Mobile Number" pattern="[0-9]{1}[0-9]{9}" maxlength="10"  oninvalid="setCustomValidity('Enter Valid Mobile Number')" onchange="try{setCustomValidity('')}catch(e){}" required="required" value="<?= $rootMemberDtls['mobile_number']?>"  >
+                  </div><!-- /.form-group -->                  
+                </div><!-- /.col --> 
+				<div class="col-md-3">
+                  <div class="form-group">
+                    <label class="emailStatus">Email ID <b style="color: red;font-size: 14px;">*</b></label>
+                    <input type="email" class="form-control emailUniq" name="email_id" placeholder="Email Id" oninvalid="setCustomValidity('Enter Valid Emai Id')" value="<?= $rootMemberDtls['email_id']?>" onchange="try{setCustomValidity('')}catch(e){}">          
+                  </div><!-- /.form-group -->                  
+          </div><!-- /.col -->
+
+                
+                 </div><!-- /.row --> 
+
+                 <div class="row">
+				
+               <div class="col-md-3">
+                  <div class="form-group">
+                    <label>Aadhar Card Number </label>
+                    <input type="text" data-type="adhaar-number" class="form-control" name="adhar_card_number" placeholder="Aadhar Card Number"  maxLength="19" value="<?= $rootMemberDtls['adhar_card_number']?>" >    
+                  </div><!-- /.form-group -->                  
+              </div><!-- /.col -->
+               
+              <div class="col-md-3">
+                  <div class="form-group">
+                    <label>PAN Card Number </label>
+                    <input type="text" class="form-control" name="pan_card_number" placeholder="PAN Card Number" maxlength="10" pattern="[a-zA-Z]{5}[0-9]{4}[a-zA-Z]{1}" title="Please enter valid PAN number. E.g. KABAA9959A" value="<?= $rootMemberDtls['pan_card_number']?>">    
+                  </div><!-- /.form-group -->                  
+              </div><!-- /.col --> 
+
+                
+
+            <div class="col-md-3">
+                  <div class="form-group">
+                    <label>Voter ID Number </label>
+                    <input type="text" class="form-control" name="voter_id" placeholder="Voter ID Number" required="required" min="1"  maxLength="10"  pattern="([^\s][A-z0-9À-ž\s]+)" title="Only AlphaNumeric" value="<?= $rootMemberDtls['voter_id_number']?>" >    
+                  </div><!-- /.form-group -->                  
+                </div><!-- /.col --> 
+
+             <div class="col-md-3">
+                  <div class="form-group">
+                    <label>Bank Account Number <b style="color: red;font-size: 14px;">*</b></label>
+                    <input type="text" class="form-control" name="bank_ac_no" placeholder="Bank Account" value="<?= $rootMemberDtls['bank_ac_number']?>" required="required" >    
+                  </div><!-- /.form-group -->                  
+            </div><!-- /.col -->
+        </div> 
+         <div class="row">
+           <div class="col-md-3">
+                  <div class="form-group">
+                    <label>Bank IFSC Code <b style="color: red;font-size: 14px;">*</b> </label>
+                    <input type="text" class="form-control" name="ifsc" placeholder="Bank IFSC Code" value="<?= $rootMemberDtls['bank_ifsc_code']?>" required="required">    
+                  </div><!-- /.form-group -->                  
+            </div><!-- /.col -->
+            <div class="col-md-3">
+                  <div class="form-group">
+                    <label>Proposer Name <b style="color: red;font-size: 14px;">*</b></label>
+                    <input type="text" class="form-control" name="proposer_name" placeholder="Proposer Name" value="<?= $rootMemberDtls['propose_name']?>"  required="required" >    
+                  </div><!-- /.form-group -->                  
+            </div><!-- /.col -->
+            <div class="col-md-3">
+                  <div class="form-group">
+                    <label>Cod / ID Number <b style="color: red;font-size: 14px;">*</b></label>
+                    <input type="text" class="form-control" name="code_id" placeholder="Cod / ID Number" value="<?= $rootMemberDtls['cod_id_number']?>"  required="required">    
+                  </div><!-- /.form-group -->                  
+            </div><!-- /.col -->
+            <div class="col-md-3">
+                  <div class="form-group">
+                    <label>Donation Amount <b style="color: red;font-size: 14px;">*</b></label>
+                    <input type="number" class="form-control" name="donation_amount" placeholder="Donation Amount" required="required" value="<?= $rootMemberDtls['donation_amount']?>" readonly  >    
+                  </div><!-- /.form-group -->                  
+            </div><!-- /.col -->
+         </div>
+        
+        <div class="row">
+          <div class="col-md-3">
+                  <div class="form-group">
+                    <label>Date Of Membership <b style="color: red;font-size: 14px;">*</b></label>
+                    <input type="date" class="form-control" name="date_membership" placeholder="Date Of Membership" required="required" value="<?= $rootMemberDtls['date_of_membership']?>">    
+                  </div><!-- /.form-group -->                  
+            </div><!-- /.col -->
+            <div class="col-md-3">
+           <div class="form-group">
+                      <label for="exampleInputFile">Any Gov.Id <b style="color: red;font-size: 14px;">*</b></label>
+                      <input type="file" id="exampleInputFile" name="gov_id" >
+                      <img src="../common/rmbr_gov_id/<?=$rootMemberDtls['gov_id'];?>" width="80px" height="80px"> 
+                    </div>
+                  <!-- /.form-group -->                  
+        </div><!-- /.col --> 
+           <div class="col-md-3">
+           <div class="form-group">
+                      <label for="exampleInputFile">Member Image <b style="color: red;font-size: 14px;">*</b></label>
+                      <input type="file" id="exampleInputFile" name="membr_img"  >
+                      <img src="../common/rmbr_img/<?=$rootMemberDtls['member_img'];?>" width="80px" height="80px">
+                    </div>
+                  <!-- /.form-group -->                  
+        </div><!-- /.col --> 
+        <div class="col-md-3">
+           <div class="form-group">
+                      <label for="exampleInputFile">Signature Image <b style="color: red;font-size: 14px;">*</b></label>
+                      <input type="file" id="exampleInputFile" name="signature_img" >
+                     <img src="../common/rmbr_signature/<?=$rootMemberDtls['signature'];?>" width="80px" height="80px">
+                    </div>
+                  <!-- /.form-group -->                  
+        </div><!-- /.col --> 
+        
+       <div class="col-md-6">
+                   <div class="box-footer">
+                    <button id="submt"  type="submit" name="update_register_mbr" class="btn btn-block btn-primary btn-flat">Submit</button>
+                  </div>                 
+                </div><!-- /.col -->
+          </div> 
+         
+				</div>
+				
+				</form>
+              </div><!-- /.row -->
+            </div><!-- /.box-body -->            
+          </div><!-- /.box -->          
+
+        </section><!-- /.content -->
+      </div><!-- /.content-wrapper -->
+      <?php include_once('footer.php');?>
+     
+      <!-- Add the sidebar's background. This div must be placed
+           immediately after the control sidebar -->
+      <div class="control-sidebar-bg"></div>
+    </div><!-- ./wrapper -->
+
+    <!-- jQuery 2.1.4 -->
+    <script src="plugins/jQuery/jQuery-2.1.4.min.js"></script>
+    <!-- Bootstrap 3.3.5 -->
+    <script src="bootstrap/js/bootstrap.min.js"></script>
+    <!-- Select2 -->
+    <script src="plugins/select2/select2.full.min.js"></script>
+    <!-- InputMask -->
+    <script src="plugins/input-mask/jquery.inputmask.js"></script>
+    <script src="plugins/input-mask/jquery.inputmask.date.extensions.js"></script>
+    <script src="plugins/input-mask/jquery.inputmask.extensions.js"></script>
+    <!-- date-range-picker -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.10.2/moment.min.js"></script>
+    <script src="plugins/daterangepicker/daterangepicker.js"></script>
+    <!-- bootstrap color picker -->
+    <script src="plugins/colorpicker/bootstrap-colorpicker.min.js"></script>
+    <!-- bootstrap time picker -->
+    <script src="plugins/timepicker/bootstrap-timepicker.min.js"></script>
+    <!-- SlimScroll 1.3.0 -->
+    <script src="plugins/slimScroll/jquery.slimscroll.min.js"></script>
+    <!-- iCheck 1.0.1 -->
+    <script src="plugins/iCheck/icheck.min.js"></script>
+    <!-- FastClick -->
+    <script src="plugins/fastclick/fastclick.min.js"></script>
+    <!-- AdminLTE App -->
+    <script src="dist/js/app.min.js"></script>
+    <!-- AdminLTE for demo purposes -->
+    <script src="dist/js/demo.js"></script>
+    <!-- Page script -->
+    <script>
+      $(function () {
+		
+		$(document).on('keyup','#RMbrSlNo',function(){           
+			  var slNo = $.trim($('#RMbrSlNo').val());		
+         $.ajax({
+				  url:'ajax_register_mbr_slno_valid',
+				  data:{slNo:slNo},
+				  type : 'POST' ,
+				  cache:false,
+				  success:function(data){
+				  $(".slNoStatus").html(data);
+          if(data.indexOf("Sl. No. Not Available") > -1)
+				  {
+					   $("#submt").prop('disabled', true);
+				  }	
+                  if(data.indexOf("Sl. No.  Available") > -1)
+				  {
+					   $("#submt").prop('disabled', false);
+				  }	
+          //console.log(data);				  
+				 } 		   
+		});
+		});	
+      $('[data-type="adhaar-number"]').keyup(function() {
+      var value = $(this).val();
+      value = value.replace(/\D/g, "").split(/(?:([\d]{4}))/g).filter(s => s.length > 0).join("-");
+      $(this).val(value);
+      });
+
+      $('[data-type="adhaar-number"]').on("change, blur", function() {
+      var value = $(this).val();
+      var maxLength = $(this).attr("maxLength");
+      if (value.length != maxLength) {
+      $(this).addClass("highlight-error");
+      } else {
+      $(this).removeClass("highlight-error");
+      }
+      });	
+
+		
+		
+      
+        //Initialize Select2 Elements
+        $(".select2").select2();       
+        //Flat red color scheme for iCheck
+        $('input[type="checkbox"].flat-red, input[type="radio"].flat-red').iCheck({
+          checkboxClass: 'icheckbox_flat-green',
+          radioClass: 'iradio_flat-green'
+        });
+
+       
+      });
+    </script>
+  </body>
+</html>

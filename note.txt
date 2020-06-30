@@ -1,0 +1,6 @@
+Transferd Form
+Sl No.
+Name
+account number
+Ifs Code
+Amount
